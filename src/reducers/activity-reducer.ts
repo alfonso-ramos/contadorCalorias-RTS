@@ -13,9 +13,13 @@ export const intialState : activityState = {
 
 export const activityReducer = (
     state: activityState = intialState,
-    actions: ActivityActions
+    action: ActivityActions
     ) => {
-        if(actions.type === 'save-activity') {
-            console.log('desde el type save-activity')
+        if(action.type === 'save-activity') {
+            return {
+                ...state,
+                activities: [...state.activities, action.payload.newActivity]
+            }
         }
+    return state
 }
