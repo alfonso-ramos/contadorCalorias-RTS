@@ -1,21 +1,50 @@
-import { useState } from "react"
+import { useState, ChangeEvent, FormEvent, Dispatch } from "react"
 import { categories } from "../data/categories"
-export default function Form() {
+import type { Activity } from "../types"
+import { ActivityActions } from "../reducers/activity-reducer"
 
-    const [activity, setActivity] = useState({
+type FormProps = {
+    dispatch: Dispatch<ActivityActions>
+}
+
+export default function Form({dispatch} : FormProps) {
+
+    const [activity, setActivity] = useState<Activity>({
         category: 1,
         name: '',
-        calories: 0
+        calories: 0,
     })
 
+
+    const handleChange = (e : ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>) => {
+
+        const isNumberField = ['category', 'calories'].includes(e.target.id)
+        setActivity({
+            ...activity,
+            [e.target.id]: isNumberField ? +e.target.value : e.target.value
+        })
+    }
+
+    const isValidActivity = () => {
+        const { name, calories } = activity
+        return name.trim() !== '' && calories > 0
+    }
+
+    const handleSubmit = (e : FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+
+        dispatch({ type: 'save-activity', payload: {newActivity: activity}})
+    } 
     return (
         <form 
             className="space-y-5 bg-white shadow p-10 rounded-lg"
+            onSubmit={handleSubmit}
         >
             <div className="grid grid-cols-1 gap-3">
                 <label className="font-semibold" htmlFor="category">Categoria:</label>
                 <select className="border border-slate-300 p-2 rounded-lg w-full bg-white" name="category" id="category"
                 value={activity.category}
+                onChange={handleChange}
                 >
                     {categories.map(category => (
                         <option key={category.id} value={category.id}>{category.name}</option>
@@ -31,6 +60,8 @@ export default function Form() {
                     className="border border-l-slate-300 p-2 rounded-lg"
                     placeholder="Ej. Comida,Ensalada, Ejercicio, Pesas, etc"
                     value={activity.name}
+                    onChange={handleChange}
+
                 />
             </div>
 
@@ -42,13 +73,16 @@ export default function Form() {
                     className="border border-l-slate-300 p-2 rounded-lg"
                     placeholder="Calorias, ej. 300, 500, etc"
                     value={activity.calories}
+                    onChange={handleChange}
+
                 />
             </div>
 
             <input 
                 type="submit"
-                className="bg-gray-800 hover:bg-gray-900 w-full p-2 font-semibold cursor-pointer uppercase text-white" 
-                value='Guardar registro'
+                className="bg-gray-800 hover:bg-gray-900 w-full p-2 font-semibold cursor-pointer uppercase text-white disabled:opacity-20 disabled:cursor-not-allowed" 
+                value={activity.category === 1 ? 'Guardar comida' : 'Guardar ejercicio'}
+                disabled={!isValidActivity()}
             />
         </form>
     )
