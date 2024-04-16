@@ -6,6 +6,7 @@ function App() {
 
 
   const [state, dispatch] = useReducer(activityReducer, initialState)
+
   return (
     <>
       <header className="bg-lime-600 py-3">
@@ -19,6 +20,7 @@ function App() {
         <div className="max-w-4xl mx-auto">
           <Form
             dispatch={dispatch}
+            state={state}
           />
         </div>
       </section>
