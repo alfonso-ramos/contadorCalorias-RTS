@@ -7,12 +7,12 @@ type activityState = {
     activities: Activity[]
 }
 
-export const intialState : activityState = {
+export const initialState : activityState = {
     activities: []
 }
 
 export const activityReducer = (
-    state: activityState = intialState,
+    state: activityState = initialState,
     action: ActivityActions
     ) => {
         if(action.type === 'save-activity') {
